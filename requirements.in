@@ -1,0 +1,15 @@
+django
+
+# ext applications
+django-environ
+
+# DB
+psycopg2-binary
+
+# Dev extensions
+django-extensions
+
+# Rest API
+djangorestframework
+django-filter
+drf-yasg[validation]

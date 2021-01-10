@@ -1,0 +1,13 @@
+-r requirements.txt
+
+factory_boy
+pytest
+pytest-django
+pytest-factoryboy
+pytest-cov
+ipython
+ipdb
+
+flake8
+flake8-bugbear
+isort
