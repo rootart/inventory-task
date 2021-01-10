@@ -1,20 +1,26 @@
-from django.http import Http404
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import exceptions
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveDestroyAPIView,
     RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from inventory.models import (
     Batch,
     Product,
 )
+from inventory.rest_api.filters import BatchFilterSet
 from inventory.rest_api.serializers import (
     BatchSerializer,
     DistributionSerializer,
     ProductSerializer,
+    BatchDetailsSerializer, WarehouseOverviewSerializer,
 )
+from inventory.stats import Overview
 
 
 class ProductListApiView(ListCreateAPIView):
@@ -31,11 +37,13 @@ class ProductDetailsApiView(RetrieveUpdateDestroyAPIView):
 class BatchListApiView(ListCreateAPIView):
     serializer_class = BatchSerializer
     queryset = Batch.objects.all()
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_class = BatchFilterSet
 
 
 class BatchDetailsApiView(RetrieveDestroyAPIView):
     lookup_url_kwarg = 'batch_id'
-    serializer_class = BatchSerializer
+    serializer_class = BatchDetailsSerializer
     queryset = Batch.objects.all()
 
 
@@ -46,7 +54,10 @@ class BatchDistributionListApiView(ListCreateAPIView):
         batch_id = self.kwargs.get('batch_id')
         self.batch = Batch.objects.filter(id=batch_id).first()
         if not self.batch:
-            raise Http404
+            self.headers = self.default_response_headers
+            response = self.handle_exception(exceptions.NotFound('Not found'))
+            response = self.finalize_response(request, response, *args, **kwargs)
+            return response
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -62,3 +73,14 @@ class BatchDistributionListApiView(ListCreateAPIView):
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
+
+class WarehouseOverviewApiView(APIView):
+    serializer_class = WarehouseOverviewSerializer
+
+    def get(self, request, format=None):
+        stats_overview = Overview(
+            Batch.objects.all()
+        )
+        serializer = self.serializer_class(stats_overview)
+        return Response(serializer.data)

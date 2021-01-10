@@ -61,3 +61,20 @@ class TestDistributionSerializer:
         )
         assert not serializer.is_valid()
         assert 'quantity' in serializer.errors
+
+    def test_save(self, batch_factory):
+        batch = batch_factory()
+        data = {
+            'quantity': batch.stocked_quantity - 10,
+            'kind': DistributionType.SHIPMENT,
+        }
+        serializer = DistributionSerializer(
+            data=data,
+            context={
+                'batch': batch,
+            }
+        )
+        assert serializer.is_valid()
+        assert batch.distributions.count() == 0
+        serializer.save()
+        assert batch.distributions.count() == 1

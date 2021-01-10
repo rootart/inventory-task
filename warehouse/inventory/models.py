@@ -4,6 +4,7 @@ from django.db.models import Sum
 from django_extensions.db.models import TimeStampedModel
 
 from inventory.constants import DistributionType
+from inventory.managers import BatchQueryset
 
 
 class Product(TimeStampedModel):
@@ -41,9 +42,13 @@ class Batch(TimeStampedModel):
         editable=True
     )
     expiration_date = models.DateField()
+    objects = BatchQueryset.as_manager()
 
     @property
     def stocked_quantity(self) -> int:
+        '''
+        Quantity of product items currently available in the stock.
+        '''
         distributed = self.distributions.all().aggregate(
             distributed=Sum('quantity')
         )['distributed'] or 0

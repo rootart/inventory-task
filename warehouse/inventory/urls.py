@@ -4,6 +4,11 @@ from inventory.rest_api import views as api_views
 
 urlpatterns = [
     path(
+        'overview/',
+        api_views.WarehouseOverviewApiView.as_view(),
+        name='api-warehouse-overview',
+    ),
+    path(
         'products/',
         api_views.ProductListApiView.as_view(),
         name='api-products-list'
@@ -28,9 +33,4 @@ urlpatterns = [
         api_views.BatchDistributionListApiView.as_view(),
         name='api-batch-distributions-list'
     ),
-    # path(
-    #     'batches/<int:batch_id>/distributions/<int:distribution_id>/',
-    #     api_views.BatchDistributionListApiView.as_view(),
-    #     name='api-batch-distributions-details'
-    # ),
 ]

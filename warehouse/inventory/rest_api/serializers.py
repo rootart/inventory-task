@@ -21,12 +21,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class BatchSerializer(serializers.ModelSerializer):
     stocked_quantity = serializers.SerializerMethodField()
+    product_title = serializers.CharField(
+        read_only=True,
+        source='product.title'
+    )
 
     class Meta:
         model = Batch
         fields = (
             'id',
             'product',
+            'product_title',
             'declared_quantity',
             'stocked_quantity',
             'delivery_timestamp',
@@ -54,14 +59,31 @@ class BatchSerializer(serializers.ModelSerializer):
         return value
 
 
+class BatchDetailsSerializer(BatchSerializer):
+    has_distributions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Batch
+        fields = BatchSerializer.Meta.fields + (
+            'has_distributions',
+        )
+
+    def get_has_distributions(self, obj: Batch) -> bool:
+        '''
+        Indicates whether give batch has any distributions and could work as optimisation for further calls
+        '''
+        return obj.distributions.exists()
+
+
 class DistributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Distribution
         fields = (
-           'kind',
-           'quantity',
-           'created',
-           'modified',
+            'id',
+            'kind',
+            'quantity',
+            'created',
+            'modified',
         )
         read_only_fields = (
             'created',
@@ -81,3 +103,7 @@ class DistributionSerializer(serializers.ModelSerializer):
         batch = self.context['batch']
         self.validated_data['batch_id'] = batch.id
         return super().save(**kwargs)
+
+
+class WarehouseOverviewSerializer(serializers.Serializer):
+    products = serializers.ListField()

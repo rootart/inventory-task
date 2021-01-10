@@ -12,6 +12,9 @@ reqs: #red Compile requirements with pip-tools
 check: #red Run Flake8 and other checkers
 	flake8
 
+coverage:
+	pytest --cov=. --cov-report=html
+
 
 .PHONY: help
 help:
