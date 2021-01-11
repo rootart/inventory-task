@@ -50,3 +50,4 @@ $ make run
 - Cover code with type annotations or use mypy (check stubs for recent versions of Django)
 - Create Dockerfile
 - Automate code checks, tests execution and image build with github actions or other CI/CD tools
+- Add logging configuration and monitoring tools (Sentry, Datadog or Newrelic)
