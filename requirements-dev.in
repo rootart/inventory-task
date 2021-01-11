@@ -1,5 +1,7 @@
 -r requirements.txt
 
+werkzeug
+
 factory_boy
 pytest
 pytest-django

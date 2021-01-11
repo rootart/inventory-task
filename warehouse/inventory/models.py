@@ -36,12 +36,15 @@ class Batch(TimeStampedModel):
     current_quantity = models.PositiveIntegerField(
         help_text='Normalised field to keep track of the current quantity in stock',
         default=0,
+        db_index=True
     )
     delivery_timestamp = models.DateTimeField(
         auto_now=True,
         editable=True
     )
-    expiration_date = models.DateField()
+    expiration_date = models.DateField(
+        db_index=True
+    )
     objects = BatchQueryset.as_manager()
 
     @property
