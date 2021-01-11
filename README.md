@@ -52,3 +52,7 @@ $ make run
 - Automate code checks, tests execution and image build with github actions or other CI/CD tools
 - Add logging configuration and monitoring tools (Sentry, Datadog or Newrelic)
 - Add project version management (bumpversion?)
+
+### Screenshots
+
+![API docs](https://www.evernote.com/shard/s46/sh/f853500b-b57e-438a-aaaf-3cc9c4158a45/d6d052221d03a072/res/7a5c89b3-fcb4-4f1a-a6ec-d61f5bc13041)
